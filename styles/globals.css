@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.border-default-200{
+    border-color: #f7dac670;
+
+}
+
+.text-primary{
+    color: #f7dac6
+}
+
+.text-highlight{
+    color: #f2a366
+}
