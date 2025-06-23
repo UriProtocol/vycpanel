@@ -60,6 +60,9 @@ export default function GuestCard({ g, mutate }: { g: Guest, mutate: () => void}
                         <span className=' text-semibold'>¿Asistirá?:</span> <p className=' opacity-70'>{g.confirmAttendance ? 'Si' : 'No'}</p>
                     </div>
                     <div className='flex gap-2'>
+                        <span className=' text-semibold'>Acompañantes:</span> <p className=' opacity-70'>{g.additionals ? g.additionals : 'Sin acompañantes'}</p>
+                    </div>
+                    <div className='flex gap-2'>
                         <span className=' text-semibold'>Mesa asignada:</span>
                         {
                             g.tableId ? (
