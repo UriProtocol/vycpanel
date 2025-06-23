@@ -11,6 +11,7 @@ import EditGuestButton from './EditguestButton';
 import api from '@/lib/api';
 import { addToast } from '@heroui/toast';
 import ViewOrGenerateInvitationButton from './ViewOrGenerateInvitationButton';
+import Link from 'next/link';
 
 
 export default function GuestCard({ g, mutate }: { g: Guest, mutate: () => void}) {
@@ -43,9 +44,9 @@ export default function GuestCard({ g, mutate }: { g: Guest, mutate: () => void}
 
     return (
         <>
-            <Card className='p-2 bg-opacity-60 relative bg-[#140408]/80 '>
-                <CardHeader>
-                    <p>{g.id}. {g.fullName}</p>
+            <div className='px-5 py-4 bg-opacity-60 relative bg-rose-950/20 rounded-sm '>
+                <div>
+                    <p className='max-w-[70%] overflow-hidden text-ellipsis whitespace-nowrap'>{g.id}. {g.fullName}</p>
                     <p className=' text-xs opacity-50 absolute top-[1.15rem] right-12'>{new Date(g.createdAt).toLocaleDateString()}</p>
                     <Button 
                         onPress={onOpen}
@@ -53,20 +54,29 @@ export default function GuestCard({ g, mutate }: { g: Guest, mutate: () => void}
                         className=' text-red-600/25 transition-all hover:text-red-600/40 text-xl top-4 right-4 absolute p-0 min-h-0 min-w-0 bg-opacity-0 w-fit h-fit'>
                         <FaXmark />
                     </Button>
-                </CardHeader>
-                <CardBody className='flex flex-col gap-4 text-sm'>
+                </div>
+                <div className='flex flex-col gap-2 text-sm mt-3'>
                     <div className='flex gap-2'>
                         <span className=' text-semibold'>¿Asistirá?:</span> <p className=' opacity-70'>{g.confirmAttendance ? 'Si' : 'No'}</p>
                     </div>
                     <div className='flex gap-2'>
-                        <span className=' text-semibold'>Mesa asignada:</span> <p className=' opacity-70'>{g.tableId ? g.tableId : 'Sin mesa'}</p>
+                        <span className=' text-semibold'>Mesa asignada:</span>
+                        {
+                            g.tableId ? (
+                                <Link href={`/dashboard/mesas/${g.tableId}/table`} className=' opacity-70 underline-offset-2 underline'>{g.tableId}</Link>
+                            ) : <p className=' opacity-70'>Sin mesa</p>
+                        }
                     </div>
-                    <div className='grid grid-cols-3 gap-4'>
-                        <EditGuestButton guest={g} mutate={mutate}/>
+                    <div className='grid grid-cols-3 gap-4 mt-3'>
+                        {
+                            !g.ticketGenerated && (
+                                <EditGuestButton guest={g} mutate={mutate}/>
+                            )
+                        }
                         <ViewOrGenerateInvitationButton g={g} mutate={mutate}/>
                     </div>
-                </CardBody>
-            </Card>
+                </div>
+            </div>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} className='bg-[#140408]/80 backdrop-blur-xl'>
                 <ModalContent>
                     {(onClose) => (

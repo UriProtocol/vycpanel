@@ -9,9 +9,8 @@ import { FaEye, FaPlus } from 'react-icons/fa6'
 import useSWR from 'swr'
 
 
-export default function ViewOrGenerateInvitationButton({ g, mutate }: { g: Guest, mutate: () => void }) {
+export default function ActivateAllInvitationsButton({ mutate }: { mutate: () => void }) {
 
-    const router = useRouter()
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const [isLoading, setIsLoading] = useState(false)
@@ -19,17 +18,18 @@ export default function ViewOrGenerateInvitationButton({ g, mutate }: { g: Guest
     async function generateInvitation(onClose: () => void) {
         setIsLoading(true)
         try {
-            await api.get(`tickets/activate/${g.id}`)
+            await api.get(`tickets/activate-all`)
             addToast({
-                title: 'Invitación(es) generada(s) exitosamente',
+                title: 'Invitaciones generadas exitosamente',
                 color: 'success'
             })
             mutate()
+            onClose()
         } catch (error) {
             console.error(error)
             addToast({
                 title: 'Ocurrió un error',
-                description: 'Ocurrió un error al generar la invitación, por favor intentalo de nuevo más tarde',
+                description: 'Ocurrió un error al generar las invitaciones, por favor intentalo de nuevo más tarde',
                 color: 'danger'
             })
         }finally{
@@ -40,29 +40,25 @@ export default function ViewOrGenerateInvitationButton({ g, mutate }: { g: Guest
     return (
         <>
             <Button
-                onPress={g.ticketGenerated ? () => { router.push(`/dashboard/invitados/${g.id}/invitation`) } : onOpen}
-                color='success'
+                onPress={onOpen}
+                color='primary'
                 variant='bordered'
-                className={` ${g.ticketGenerated ? 'col-span-3' : 'col-span-2'}`}
-                size='sm'
                 fullWidth
-                startContent={
-                    g.ticketGenerated ? <FaEye /> : <FaPlus />
-                }
+                startContent={<FaPlus />}
             >
                 {
-                    g.ticketGenerated ? 'Ver Invitación' : 'Generar Invitación'
+                   'Generar todas las invitaciones'
                 }
             </Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} className='bg-[#140408]/80 backdrop-blur-xl'>
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="flex flex-col gap-1 text-xl">Generar invitación. Invitado {g.id}</ModalHeader>
+                            <ModalHeader className="flex flex-col gap-1 text-xl">Generar todas las invitaciones</ModalHeader>
                             <ModalBody className='flex flex-col gap-6'>
                                 <h1 className=' text-lg'>
-                                    ¿Estás seguro que deseas generar la invitación del invitado "{g.fullName}"? <br /><br />
-                                    Una vez generada la invitación, no podrás editarlo.
+                                    ¿Estás seguro que deseas generar las invitaciones de todos los invitados registrados? <br /><br />
+                                    Una vez generadas las invitaciones. No podrás editarlos.
                                 </h1>
                             </ModalBody>
                             <ModalFooter>
@@ -70,7 +66,7 @@ export default function ViewOrGenerateInvitationButton({ g, mutate }: { g: Guest
                                     Cancelar
                                 </Button>
                                     <Button isLoading={isLoading} color="success" onPress={() => generateInvitation(onClose)} variant='bordered'>
-                                    Generar invitación
+                                    Generar invitaciones
                                 </Button>
                             </ModalFooter>
                         </>

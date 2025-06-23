@@ -13,4 +13,5 @@ export type Table = {
     createdAt: string,
     id: number,
     name: string
+    guests: Guest[]
 }

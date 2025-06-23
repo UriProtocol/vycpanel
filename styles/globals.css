@@ -14,3 +14,29 @@
 .text-highlight{
     color: #f2a366
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 5rem;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(34, 2, 11);
+  border-radius: 5rem;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(49, 3, 16);
+}
+
+::-webkit-scrollbar-button{
+  height: 3px;
+  background-color: transparent;
+}

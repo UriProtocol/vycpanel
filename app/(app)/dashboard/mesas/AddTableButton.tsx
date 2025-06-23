@@ -14,7 +14,7 @@ export default function AddTableButton({mutate}: {mutate: () => void}) {
 
 
     const [name, setName] = useState('')    
-    const [capacity, setCapacity] = useState(0)    
+    const [capacity, setCapacity] = useState(10)    
     const [isLoading, setIsLoading] = useState(false)
 
 

@@ -12,6 +12,7 @@ import api from '@/lib/api'
 import useSWR from 'swr'
 import { Spinner } from '@heroui/spinner'
 import { addToast } from '@heroui/toast'
+import ActivateAllInvitationsButton from './ActivateAllInvitationsButton'
 
 const exampleGuests = [
     {
@@ -80,7 +81,7 @@ export default function page() {
     const { data, isLoading, mutate } = useSWR('guests', fetcher)
 
     return (
-        <div>
+        <>
             <h1 className=' text-center font-semibold text-2xl mt-4 '>Invitados</h1>
             <div className='flex gap-4 items-center mt-4'>
                 <AddGuestButton mutate={mutate}/>
@@ -96,10 +97,13 @@ export default function page() {
                     onValueChange={setSearch}
                 />
             </div>
-            <div className='grid sm:grid-cols-2 gap-4 mt-6'>
+            <div className=' mt-4'>
+                <ActivateAllInvitationsButton mutate={mutate}/>
+            </div>
+            <div className='grid sm:grid-cols-2 gap-4 mt-4 mb-6'>
                 {
                     !isLoading && data ? (
-                        data?.filter((g: typeof exampleGuests[0]) => `${g.id}. ${g.fullName}`.includes(search)).map((g: typeof exampleGuests[0]) => {
+                        data?.filter((g: typeof exampleGuests[0]) => `${g.id}. ${g.fullName}`.toLowerCase().includes(search?.toLowerCase() || '')).map((g: typeof exampleGuests[0]) => {
                             return (
                                 <GuestCard key={g.id} g={g} mutate={mutate}/>
                             )
@@ -107,6 +111,6 @@ export default function page() {
                     ) : isLoading ? <div className='flex justify-center'><Spinner size='lg' className=' mt-4' color='danger'/> </div>: null
                 }
             </div>
-        </div>
+        </>
     )
 }

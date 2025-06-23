@@ -28,14 +28,14 @@ export default function layout({ children }: { children: React.ReactNode }) {
         <AuthWrapper>
             <div className='h-screen w-full'>
 
-                <Navbar className='bg-[#140408]/80 backdrop-blur-xl' isMenuOpen={isMenuOpen}>
+                <Navbar className='bg-[#140408]/80 backdrop-blur-xl shadow' isMenuOpen={isMenuOpen}>
                     <NavbarContent>
                         <NavbarMenuToggle
                             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                             className=""
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                         />
-                        <NavbarBrand>
+                        <NavbarBrand className=' cursor-pointer' as={Link} href={'/dashboard'}>
                             <p className="font-bold text-inherit">V & C</p>
                         </NavbarBrand>
                     </NavbarContent>
@@ -61,7 +61,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
                         ))}
                     </NavbarMenu>
                 </Navbar>
-                <div className=' mt-2 px-6'>
+                <div className=' pt-2 px-6 max-h-[calc(100vh-4rem)] overflow-auto'>
                     {children}
                 </div>
             </div>

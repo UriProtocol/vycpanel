@@ -10,6 +10,7 @@ import api from '@/lib/api';
 import { addToast } from '@heroui/toast';
 import useSWR from 'swr';
 import { Spinner } from '@heroui/spinner';
+import { Table } from '@/lib/types';
 
 const exampleTables = [
     {
@@ -52,10 +53,8 @@ export default function Page() {
 
     const { data, isLoading, mutate } = useSWR('tables', fetcher)
 
-    console.log(data)
-
     return (
-        <div>
+        <>
             <h1 className=' text-center font-semibold text-2xl mt-4'>Mesas</h1>
             <div className='flex gap-4 items-center my-4'>
                 <AddTableButton mutate={mutate}/>
@@ -74,10 +73,10 @@ export default function Page() {
             <div className='grid grid-cols-2 gap-4'>
                 {
                     !isLoading && data ? (
-                        data.filter((t: typeof exampleTables[0]) => `${t.id}. ${t.name}`.includes(search)).map((t: typeof exampleTables[0]) => (<TableComponent key={t.id} table={t} />))
+                        data.filter((t: Table) => `${t.id}. ${t.name}`.toLowerCase().includes(search.toLowerCase())).map((t: Table) => (<TableComponent key={t.id} table={t} />))
                     ) : isLoading ? <div className=' flex justify-center col-span-2'><Spinner size='lg' className=' mt-4' color='danger'/></div> : null
                 }
             </div>
-        </div>
+        </>
     )
 }
