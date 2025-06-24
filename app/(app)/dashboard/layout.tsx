@@ -13,6 +13,8 @@ export default function layout({ children }: { children: React.ReactNode }) {
     const menuItems = [
         "Mesas",
         "Invitados",
+        "Generales",
+        "Scanner",
         //'Tickets'
     ];
 
