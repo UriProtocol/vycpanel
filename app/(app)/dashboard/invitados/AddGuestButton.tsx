@@ -39,7 +39,7 @@ export default function AddGuestButton({ mutate }: { mutate: () => void }) {
             })
             return
         }
-        if (additionals < 1) {
+        if (additionals < 0) {
             addToast({
                 title: 'Error de validación',
                 description: 'No se puede tener menos de 0 acompañantes',
@@ -64,12 +64,22 @@ export default function AddGuestButton({ mutate }: { mutate: () => void }) {
 
             console.log(error)
 
+            //@ts-expect-error
+            if (error?.response?.data?.error?.includes('already exists')) {
+                addToast({
+                    title: 'Hubo un error',
+                    description: 'Hubo un error al agregar al invitado. Ya existe un invitado con este nombre',
+                    color: 'danger'
+                })
+                return
+            }
+
             addToast({
                 title: 'Hubo un error',
                 description: 'Hubo un error al agregar al invitado. Por favor intentalo de nuevo más tarde',
                 color: 'danger'
             })
-        }finally{
+        } finally {
             setIsLoading(false)
         }
     }
@@ -93,10 +103,10 @@ export default function AddGuestButton({ mutate }: { mutate: () => void }) {
                                     label='Nombre del invitado'
                                     labelPlacement='outside' />
                                 <div className=' flex gap-6 items-end'>
-                                    <Checkbox 
+                                    <Checkbox
                                         isSelected={confirmAttendance}
                                         onValueChange={(e) => handleChange(e, 'confirmAttendance')}
-                                        className='' 
+                                        className=''
                                         color='success'><p className=' text-sm text-primary'>¿Asistirá?</p></Checkbox>
                                     <NumberInput
                                         value={additionals}
