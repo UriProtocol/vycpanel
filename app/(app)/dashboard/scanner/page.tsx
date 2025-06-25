@@ -36,8 +36,6 @@ export default function ScannerPage() {
 
     } catch (error) {
 
-      setScannerResult('')
-
       console.log(error)
 
       //@ts-expect-error
@@ -67,17 +65,19 @@ export default function ScannerPage() {
 
     } finally {
       setIsLoading(false)
+      setScannerResult('')
+      setRawScanner(null)
     }
 
   }
 
-  function handleReset(){
+  function handleReset() {
     setData(initData)
     setScannerResult('')
   }
 
-  useEffect(() =>{
-    if(!rawScanner) {
+  useEffect(() => {
+    if (!rawScanner) {
       setScannerResult('')
       return
     }
