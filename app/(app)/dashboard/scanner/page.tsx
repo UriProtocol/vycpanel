@@ -1,15 +1,121 @@
 "use client"
+import api from '@/lib/api'
+import { Button } from '@heroui/button'
+import { addToast } from '@heroui/toast'
 import { Scanner } from '@yudiel/react-qr-scanner'
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+
+const initData = {
+  guestName: "",
+  tableName: "",
+  ticketStatus: ""
+}
 
 export default function ScannerPage() {
 
   const [scannerResult, setScannerResult] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [data, setData] = useState(initData)
+
+  async function handleScan() {
+
+    setIsLoading(true)
+    try {
+
+      const data = await api.get(`tickets/scan-qr/${scannerResult}`).then(res => res.data)
+
+      setData(data)
+
+      addToast({
+        title: 'Invitación encontrada',
+        color: 'success'
+      })
+
+    } catch (error) {
+
+      console.log(error)
+
+      //@ts-expect-error
+      if (error?.response?.data?.includes('invalid code')) {
+        addToast({
+          title: 'Hubo un error',
+          description: 'No se encontró esta invitación.',
+          color: 'danger'
+        })
+        return
+      }
+      //@ts-expect-error
+      if (error?.response?.data?.includes('already used')) {
+        addToast({
+          title: 'Hubo un error',
+          description: 'Esta invitación ya fue escaneada anteriormente.',
+          color: 'danger'
+        })
+        return
+      }
+
+      addToast({
+        title: 'Hubo un error',
+        description: 'Ocurrió un error desconocido al escanear la invitación. Por favor intentalo más tarde.',
+        color: 'danger'
+      })
+
+    } finally {
+      setIsLoading(false)
+    }
+
+  }
+
+  function handleReset(){
+    setData(initData)
+    setScannerResult('')
+  }
 
   return (
     <>
-      <Scanner onScan={(result) => setScannerResult(JSON.stringify(result))} />
-        {scannerResult}
+      {
+        !data.guestName ? (
+          <>
+            <Scanner onScan={(result) => setScannerResult(result[0].rawValue)} />
+            {
+              !!scannerResult && (
+                <motion.div
+                  className=' w-full'
+                  initial={{
+                    y: -5,
+                    opacity: 0
+                  }}
+                  animate={{
+                    y: 0,
+                    opacity: 1
+                  }}
+                >
+
+                  <Button fullWidth className='mt-4' color='success' variant='bordered' onPress={handleScan} isLoading={isLoading}>Escanear Invitación</Button>
+                </motion.div>
+              )
+            }
+          </>
+        ) : (
+          <motion.div
+            className='flex flex-col gap-4 items-center justify-center text-2xl py-8'
+            initial={{
+              y: -5,
+              opacity: 0
+            }}
+            animate={{
+              y: 0,
+              opacity: 1
+            }}
+          >
+            <p>Nombre del invitado: <span className=' opacity-75'>{data.guestName}</span></p>
+            <p>Nombre de la mesa: <span className=' opacity-75'>{data.tableName}</span></p>
+            <p>Estatus del invitado: <span className=' opacity-75'>{data.ticketStatus == 'active' ? 'Asistirá' : 'No asistirá'}</span></p>
+            <Button fullWidth className='mt-4' color='success' variant='bordered' onPress={handleReset}>Escanear otra invitación</Button>
+          </motion.div>
+        )
+      }
     </>
   )
 }
