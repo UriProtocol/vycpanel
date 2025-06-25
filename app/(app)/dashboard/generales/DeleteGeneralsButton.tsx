@@ -80,7 +80,7 @@ export default function DeleteGeneralsButton({ mutate }: { mutate: () => void })
                                     labelPlacement='outside'
                                     value={count}
                                     onValueChange={setCount}
-                                    maxValue={5}
+                                    maxValue={100}
                                 />
                             </ModalBody>
                             <ModalFooter>
