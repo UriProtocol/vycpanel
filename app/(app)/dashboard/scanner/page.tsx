@@ -2,8 +2,8 @@
 import api from '@/lib/api'
 import { Button } from '@heroui/button'
 import { addToast } from '@heroui/toast'
-import { Scanner } from '@yudiel/react-qr-scanner'
-import React, { useState } from 'react'
+import { IDetectedBarcode, Scanner } from '@yudiel/react-qr-scanner'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
 const initData = {
@@ -14,7 +14,7 @@ const initData = {
 
 export default function ScannerPage() {
 
-  //const [rawScanner, setRawScanner] = useState('')
+  const [rawScanner, setRawScanner] = useState<IDetectedBarcode[] | null>()
   const [scannerResult, setScannerResult] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [data, setData] = useState(initData)
@@ -76,12 +76,22 @@ export default function ScannerPage() {
     setScannerResult('')
   }
 
+  useEffect(() =>{
+    if(!rawScanner) {
+      setScannerResult('')
+      return
+    }
+
+    setScannerResult(rawScanner[0].rawValue)
+
+  }, [JSON.stringify(rawScanner)])
+
   return (
     <>
       {
         !data.guestName ? (
           <>
-            <Scanner onScan={(result) => setScannerResult(result[0].rawValue)} />
+            <Scanner onScan={(result) => setRawScanner(result)} />
             {
               !!scannerResult && (
                 <motion.div
