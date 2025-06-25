@@ -25,6 +25,7 @@ export default function ViewOrGenerateInvitationButton({ g, mutate }: { g: Guest
                 color: 'success'
             })
             mutate()
+            onClose()
         } catch (error) {
             console.error(error)
             addToast({
