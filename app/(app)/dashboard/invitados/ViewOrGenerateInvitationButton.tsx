@@ -61,7 +61,7 @@ export default function ViewOrGenerateInvitationButton({ g, mutate }: { g: Guest
                             <ModalHeader className="flex flex-col gap-1 text-xl">Generar invitación. Invitado {g.id}</ModalHeader>
                             <ModalBody className='flex flex-col gap-6'>
                                 <h1 className=' text-lg'>
-                                    ¿Estás seguro que deseas generar la invitación del invitado "{g.fullName}"? <br /><br />
+                                    ¿Estás seguro que deseas generar la invitación del invitado &quot;{g.fullName}&quot;? <br /><br />
                                     Una vez generada la invitación, no podrás editarlo.
                                 </h1>
                             </ModalBody>
