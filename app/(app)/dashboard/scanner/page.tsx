@@ -14,9 +14,11 @@ const initData = {
 
 export default function ScannerPage() {
 
+  const [rawScanner, setRawScanner] = useState('')
   const [scannerResult, setScannerResult] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [data, setData] = useState(initData)
+  const [error, setError] = useState('')
 
   async function handleScan() {
 
@@ -34,7 +36,10 @@ export default function ScannerPage() {
 
     } catch (error) {
 
+      setScannerResult('')
+
       console.log(error)
+      setError(JSON.stringify(error))
 
       //@ts-expect-error
       if (error?.response?.data?.includes('invalid code')) {
@@ -77,7 +82,7 @@ export default function ScannerPage() {
       {
         !data.guestName ? (
           <>
-            <Scanner onScan={(result) => setScannerResult(result[0].rawValue)} />
+            <Scanner onScan={(result) => {setScannerResult(result[0].rawValue); setRawScanner(JSON.stringify(result))}} />
             {
               !!scannerResult && (
                 <motion.div
@@ -115,6 +120,15 @@ export default function ScannerPage() {
             <Button fullWidth className='mt-4' color='success' variant='bordered' onPress={handleReset}>Escanear otra invitación</Button>
           </motion.div>
         )
+      }
+      {
+        rawScanner
+      }
+      {
+        scannerResult
+      }
+      {
+        error
       }
     </>
   )
