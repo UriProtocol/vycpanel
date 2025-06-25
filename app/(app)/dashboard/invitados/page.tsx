@@ -74,7 +74,7 @@ const exampleGuests = [
 
 const fetcher = () => api.get('guests').then(res => res.data).catch(() => addToast({title: 'Hubo un error', description: 'Hubo un error al obtener a los invitados', color: 'danger'}))
 
-export default function page() {
+export default function GuestsPage() {
 
     const [search, setSearch] = useState('')
 

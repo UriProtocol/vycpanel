@@ -2,7 +2,7 @@
 import { Scanner } from '@yudiel/react-qr-scanner'
 import React, { useState } from 'react'
 
-export default function page() {
+export default function ScannerPage() {
 
   const [scannerResult, setScannerResult] = useState('')
 

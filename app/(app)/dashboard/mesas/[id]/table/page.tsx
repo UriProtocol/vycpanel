@@ -24,7 +24,7 @@ const initValues = {
     capacidad: 0
 }
 
-export default function page() {
+export default function TablesPage() {
 
     const { id } = useParams()
 

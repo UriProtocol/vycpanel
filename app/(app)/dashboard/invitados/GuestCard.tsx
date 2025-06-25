@@ -87,7 +87,7 @@ export default function GuestCard({ g, mutate }: { g: Guest, mutate: () => void}
                             <ModalHeader className="flex flex-col gap-1 text-xl">Eliminar invitado {g.id}</ModalHeader>
                             <ModalBody className='flex flex-col gap-6'>
                                 <h1 className=' text-lg'>
-                                    ¿Estás seguro que deseas eliminar al invitado "{g.fullName}"?
+                                    ¿Estás seguro que deseas eliminar al invitado &quot;{g.fullName}&quot;?
                                 </h1>
                             </ModalBody>
                             <ModalFooter>

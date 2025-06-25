@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { addToast } from '@heroui/toast';
 
-export default function page() {
+export default function LoginPage() {
 
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
