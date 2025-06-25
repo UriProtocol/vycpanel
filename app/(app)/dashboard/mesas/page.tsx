@@ -70,7 +70,7 @@ export default function Page() {
                     onValueChange={setSearch}
                 />
             </div>
-            <div className='grid grid-cols-2 gap-4'>
+            <div className='grid grid-cols-2 sm:grid-cols-3 gap-4'>
                 {
                     !isLoading && data ? (
                         data.filter((t: Table) => `${t.id}. ${t.name}`.toLowerCase().includes(search.toLowerCase())).map((t: Table) => (<TableComponent key={t.id} table={t} />))
