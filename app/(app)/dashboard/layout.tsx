@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 import AuthWrapper from './authWrapper'
 
-export default function layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
     const menuItems = [

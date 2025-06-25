@@ -245,7 +245,7 @@ export default function TablesPage() {
                             <ModalHeader className="flex flex-col gap-1 text-xl">Eliminar mesa {id}</ModalHeader>
                             <ModalBody className='flex flex-col gap-6'>
                                 <h1 className=' text-lg'>
-                                    ¿Estás seguro que deseas eliminar la mesa "{table.name}"?
+                                    ¿Estás seguro que deseas eliminar la mesa &quot;{table.name}&quot;?
                                 </h1>
                             </ModalBody>
                             <ModalFooter>
