@@ -13,11 +13,13 @@ import { FaPlus, FaXmark } from 'react-icons/fa6'
 import useSWR from 'swr'
 import { AnimatePresence, motion } from 'framer-motion'
 import AssignGuestModal from './AssignGuestModal'
-import { Guest } from '@/lib/types'
+import { GeneralTicket, Guest, Table } from '@/lib/types'
 import UnassignGuestModal from './UnassignGuestModal'
+import AssignGeneralModal from './AssignGeneralModal'
 
-const fetcher = ([url]: [url: string]) => api.get(url).then(res => res.data).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener los datos de la mesa', color: 'danger' }))
+const fetcher = ([url]: [url: string]) => api.get(url).then(res => res.data as Table).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener los datos de la mesa', color: 'danger' }))
 const guestsFetcher = () => api.get('guests').then(res => res.data as Guest[]).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener a los invitados', color: 'danger' }))
+const generalsFetcher = () => api.get('tickets/generals').then(res => res.data as GeneralTicket[]).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener las invitaciones generales', color: 'danger' }))
 
 const initValues = {
     nombre: '',
@@ -31,6 +33,8 @@ export default function TablesPage() {
     const { data: table, isLoading: isLoadingTable, mutate } = useSWR([`tables/guests/${id || ''}`], fetcher)
 
     const { data: guests, isLoading: isLoadingGuests, mutate: mutateGuests } = useSWR('guests', guestsFetcher)
+
+    const { data: generalTickets, isLoading: isLoadingGeneralTickets, mutate: mutateGeneralTickets } = useSWR('tickets/generals', generalsFetcher)
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -105,14 +109,21 @@ export default function TablesPage() {
 
     const guestSize = useMemo(() => {
 
-        const occupied = (table?.guests?.reduce((acc: number, cur: Guest) => acc + cur.additionals, 0) || 0) + table?.guests?.length || 0
+        if (!table) {
+            return {
+                occupied: 0,
+                capacity: 0
+            }
+        }
+
+        const occupied = (table?.guests?.reduce((acc: number, cur: Guest) => acc + cur.additionals, 0) || 0) + (table?.guests?.length || 0) + table?.generals?.length || 0
         const capacity = occupied + table?.capacity
 
         return {
             occupied,
             capacity
         }
-    }, [table?.guests?.length])
+    }, [table?.guests?.length, table?.generals?.length])
 
 
     useEffect(() => {
@@ -137,7 +148,7 @@ export default function TablesPage() {
                     )
                 }
                 {
-                    table && (
+                    !!table && (
                         <>
                             <p >Fecha de creación: <span className=' opacity-70'>{new Date(table.createdAt).toLocaleDateString()}</span></p>
                             <Input
@@ -202,37 +213,74 @@ export default function TablesPage() {
                                 </AnimatePresence>
                             </div>
                             <Divider />
-                            <div className=' flex justify-between'>
-                                <p>Invitados: </p>
-                                <p className=' ml-auto'>{guestSize.occupied} / {guestSize.capacity}</p>
+                            <div className='flex justify-between'>
+                                <p>Capacidad: </p>
+                                <p>{guestSize.occupied} / {guestSize.capacity}</p>
                             </div>
-                            <div className='flex flex-col gap-3 mb-4'>
-                                {
-                                    table?.guests?.map((g: Guest) => {
+                            {
+                                !!table?.guests?.length && (
+                                    <>
+                                        <div className=' flex justify-between'>
+                                            <p>Invitados: </p>
+                                        </div>
+                                        <div className='flex flex-col gap-3 mb-4'>
+                                            {
+                                                table?.guests?.map((g: Guest) => {
 
-                                        return (
-                                            <div key={g.id} className='bg-rose-950/30 rounded-sm p-4 flex items-center justify-between'>
-                                                <div>
-                                                    <p className='text-ellipsis overflow-hidden whitespace-nowrap text-sm mb-0.5'>{g.fullName}</p>
-                                                    {
-                                                        g.additionals ? (
-                                                            <p className=' text-xs opacity-65'>Acompañantes: {g.additionals}</p>
-                                                        ) : (
-                                                            <p className=' text-xs opacity-65'>Sin acompañantes</p>
-                                                        )
-                                                    }
-                                                </div>
-                                                <UnassignGuestModal mutate={mutate} mutateGuests={mutateGuests} id={g.id} />
-                                            </div>
-                                        )
-                                    })
-                                }
-                                {
-                                    guestSize.occupied < guestSize.capacity && (
+                                                    return (
+                                                        <div key={g.id + '-guest'} className='bg-rose-950/30 rounded-sm p-4 flex items-center justify-between'>
+                                                            <div>
+                                                                <p className='text-ellipsis overflow-hidden whitespace-nowrap text-sm mb-0.5'>{g.fullName}</p>
+                                                                {
+                                                                    g.additionals ? (
+                                                                        <p className=' text-xs opacity-65'>Acompañantes: {g.additionals}</p>
+                                                                    ) : (
+                                                                        <p className=' text-xs opacity-65'>Sin acompañantes</p>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                            <UnassignGuestModal mutate={mutate} mutateGuests={mutateGuests} id={g.id} />
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    </>
+                                )
+                            }
+                            {
+                                !!table?.generals?.length && (
+                                    <>
+                                        <div className=' flex justify-between'>
+                                            <p>Tickets generales: </p>
+                                        </div>
+                                        <div className='flex flex-col gap-3 mb-4'>
+                                            {
+                                                table?.generals?.map((g: GeneralTicket) => {
+
+                                                    return (
+                                                        <div key={g.id + '-general'} className='bg-rose-950/30 rounded-sm p-4 flex items-center justify-between'>
+                                                            <div>
+                                                                <p className='text-ellipsis overflow-hidden whitespace-nowrap text-sm mb-0.5'>Ticket general #{g.folio}</p>
+                                                            </div>
+                                                            <UnassignGuestModal mutate={mutate} mutateGuests={mutateGuests} id={g.id} isGeneral />
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    </>
+
+                                )
+                            }
+                            {
+                                guestSize.occupied < guestSize.capacity && (
+                                    <div className='grid grid-cols-2 gap-3'>
                                         <AssignGuestModal mutate={mutate} table={table} data={guests || []} isLoading={isLoadingGuests} mutateGuests={mutateGuests} />
-                                    )
-                                }
-                            </div>
+                                        <AssignGeneralModal mutate={mutate} table={table} data={generalTickets || []} isLoading={isLoadingGeneralTickets} mutateGuests={mutateGeneralTickets} />
+                                    </div>
+                                )
+                            }
                         </>
                     )
                 }
@@ -245,7 +293,7 @@ export default function TablesPage() {
                             <ModalHeader className="flex flex-col gap-1 text-xl">Eliminar mesa {id}</ModalHeader>
                             <ModalBody className='flex flex-col gap-6'>
                                 <h1 className=' text-lg'>
-                                    ¿Estás seguro que deseas eliminar la mesa &quot;{table.name}&quot;?
+                                    ¿Estás seguro que deseas eliminar la mesa &quot;{table?.name}&quot;?
                                 </h1>
                             </ModalBody>
                             <ModalFooter>

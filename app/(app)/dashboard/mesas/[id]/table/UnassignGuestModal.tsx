@@ -5,7 +5,7 @@ import { addToast } from '@heroui/toast'
 import React, { useState } from 'react'
 import { FaXmark } from 'react-icons/fa6'
 
-export default function UnassignGuestModal({ mutate, mutateGuests, id }: { mutate: () => void, mutateGuests: ()=> void, id: number }) {
+export default function UnassignGuestModal({ mutate, mutateGuests, id, isGeneral = false }: { mutate: () => void, mutateGuests: ()=> void, id: number, isGeneral?: boolean }) {
 
     const [isLoadingUnassign, setIsLoadingUnassign] = useState(false)
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -14,7 +14,10 @@ export default function UnassignGuestModal({ mutate, mutateGuests, id }: { mutat
     async function handleUnassign(onClose: () => void) {
         setIsLoadingUnassign(true)
         try {
-            await api.patch(`guests/unassign/${id}`)
+
+            const endpoint = isGeneral ? `generals/unassign/${id}` : `guests/unassign/${id}`
+
+            await api.patch(endpoint)
             addToast({
                 title: 'Invitado desvinculado exitosamente',
                 color: 'warning'
