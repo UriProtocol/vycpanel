@@ -68,8 +68,6 @@ function InvitationComponent({ data }: { data: any }) {
 
   }
 
-  console.log(data)
-
   return (
     <motion.div
       className=' bg-[#1c0009]'

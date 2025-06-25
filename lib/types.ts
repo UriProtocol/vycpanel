@@ -15,3 +15,12 @@ export type Table = {
     name: string
     guests: Guest[]
 }
+
+export type GeneralTicket = {
+  createdAt: string,
+  folio: number,
+  id: number,
+  pdfUrl: string,
+  qrCodeUrl: string,
+  tableId: null | number
+}

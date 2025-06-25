@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 import AuthWrapper from './authWrapper'
+import { FaClipboardList } from 'react-icons/fa6'
+import CountsButton from '@/components/nav/CountsButton'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -43,6 +45,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </NavbarContent>
                     <NavbarContent justify="end">
                         {/*<ThemeSwitch />*/}
+                        <NavbarItem>
+                           <CountsButton />
+                        </NavbarItem>
                         <NavbarItem>
                             <Button color="danger" variant="bordered" onPress={handleLogout}>
                                 Cerrar sesión
