@@ -14,11 +14,11 @@ const initData = {
 
 export default function ScannerPage() {
 
-  const [rawScanner, setRawScanner] = useState('')
+  //const [rawScanner, setRawScanner] = useState('')
   const [scannerResult, setScannerResult] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [data, setData] = useState(initData)
-  const [error, setError] = useState('')
+  //const [error, setError] = useState('')
 
   async function handleScan() {
 
@@ -39,7 +39,6 @@ export default function ScannerPage() {
       setScannerResult('')
 
       console.log(error)
-      setError(JSON.stringify(error))
 
       //@ts-expect-error
       if (error?.response?.data?.includes('invalid code')) {
@@ -82,7 +81,7 @@ export default function ScannerPage() {
       {
         !data.guestName ? (
           <>
-            <Scanner onScan={(result) => {setScannerResult(result[0].rawValue); setRawScanner(JSON.stringify(result))}} />
+            <Scanner onScan={(result) => setScannerResult(result[0].rawValue)} />
             {
               !!scannerResult && (
                 <motion.div
@@ -104,7 +103,7 @@ export default function ScannerPage() {
           </>
         ) : (
           <motion.div
-            className='flex flex-col gap-4 items-center justify-center text-2xl py-8'
+            className='flex flex-col gap-4 items-center justify-center text-xl py-8'
             initial={{
               y: -5,
               opacity: 0
@@ -115,13 +114,13 @@ export default function ScannerPage() {
             }}
           >
             <p>Nombre del invitado: <span className=' opacity-75'>{data.guestName}</span></p>
-            <p>Nombre de la mesa: <span className=' opacity-75'>{data.tableName}</span></p>
+            <p>Nombre de la mesa: <span className=' opacity-75'>{data.tableName || 'Sin mesa'}</span></p>
             <p>Estatus del invitado: <span className=' opacity-75'>{data.ticketStatus == 'active' ? 'Asistirá' : 'No asistirá'}</span></p>
             <Button fullWidth className='mt-4' color='success' variant='bordered' onPress={handleReset}>Escanear otra invitación</Button>
           </motion.div>
         )
       }
-      {
+      {/*{
         rawScanner
       }
       {
@@ -129,7 +128,7 @@ export default function ScannerPage() {
       }
       {
         error
-      }
+      }*/}
     </>
   )
 }
