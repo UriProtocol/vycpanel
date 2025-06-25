@@ -14,6 +14,7 @@ export type Table = {
     id: number,
     name: string
     guests: Guest[]
+    generals: GeneralTicket[]
 }
 
 export type GeneralTicket = {
