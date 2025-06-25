@@ -50,6 +50,14 @@ export default function DeleteGeneralsButton({ mutate }: { mutate: () => void })
                     color: 'danger'
                 })
             }
+            //@ts-expect-error
+            if (error?.response?.data?.error?.includes('assigned')) {
+                addToast({
+                    title: 'Hubo un error',
+                    description: 'No se puede eliminar la invitación general ya que está asignada a una mesa.',
+                    color: 'danger'
+                })
+            }
 
             addToast({
                 title: 'Hubo un error',
