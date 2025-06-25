@@ -41,13 +41,22 @@ export default function AddGeneralButton({ mutate }: { mutate: () => void }) {
 
         try {
             await api.post(`tickets/create-generals?count=${count}`)
-            addToast({
-                title: 'Invitaciones generales creadas exitosamente',
-                color: 'success'
-            })
             setCount(1)
             onClose()
-            mutate()
+            
+            addToast({
+                title: "Actualizando",
+                description: "Actualizando invitaciones generales. Espera un momento...",
+                color: 'primary',
+                promise: new Promise((resolve) => setTimeout(() => {
+                    mutate()
+                    addToast({
+                        title: 'Invitaciones generales creadas exitosamente',
+                        color: 'success'
+                    })
+                    resolve(true)
+                }, 10000)),
+            });
 
         } catch (error) {
 
@@ -82,7 +91,7 @@ export default function AddGeneralButton({ mutate }: { mutate: () => void }) {
                                     labelPlacement='outside'
                                     value={count}
                                     onValueChange={setCount}
-                                    maxValue={5}
+                                    maxValue={10}
                                 />
                             </ModalBody>
                             <ModalFooter>
