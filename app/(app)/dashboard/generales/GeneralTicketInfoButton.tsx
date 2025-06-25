@@ -62,7 +62,7 @@ export default function GeneralTicketInfoButton({ ticket }: { ticket: GeneralTic
                                 <img src={ticket?.qrCodeUrl} className=' w-40 h-40 rounded-xs mx-auto' alt='Código qr' />
                             </ModalBody>
                             <ModalFooter>
-                                <Button color="warning" variant='bordered'>
+                                <Button color="warning" variant='bordered' onPress={onClose}>
                                     Cerrar
                                 </Button>
                                 <Button color="success" variant='bordered' onPress={() => downloadPdf(onClose)} isLoading={isLoading}>
