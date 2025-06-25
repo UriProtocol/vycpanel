@@ -121,11 +121,8 @@ export default function AssignGuestModal({ mutate, table, data, mutateGuests, is
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="warning" onPress={onClose} variant='bordered'>
-                                    Cancelar
+                                    Cerrar
                                 </Button>
-                                {/*<Button isLoading={isLoadingDelete} color="danger" onPress={() => handelDeleteTable(onClose)} variant='bordered'>
-                                    Eliminar mesa
-                                </Button>*/}
                             </ModalFooter>
                         </>
                     )}
