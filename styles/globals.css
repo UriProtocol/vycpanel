@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body{
+  touch-action: manipulation;
+}
+
 .border-default-200{
     border-color: #f7dac670;
 
