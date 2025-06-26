@@ -68,7 +68,7 @@ export default function AssignGeneralModal({ mutate, table, data, mutateGuests, 
                 onPress={onOpen}
             >
                 <FaPlus />
-                Asignar invitación general
+                Inv. Generales
             </Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} className='bg-[#140408]/80 backdrop-blur-xl'>
                 <ModalContent>
