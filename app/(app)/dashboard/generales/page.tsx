@@ -26,7 +26,7 @@ export default function Generales() {
 
       <div className='flex flex-col gap-4 my-6'>
         {
-          !isLoading && data && data.map((t: GeneralTicket) => {
+          !isLoading && data && data.toSpliced(50).map((t: GeneralTicket) => {
 
             return (
               <div key={t.id} className='bg-rose-950/30 rounded-sm p-4 flex items-center justify-between relative'>

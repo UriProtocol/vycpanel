@@ -73,7 +73,7 @@ export default function Page() {
             <div className='grid grid-cols-2 sm:grid-cols-3 gap-4'>
                 {
                     !isLoading && data ? (
-                        data.filter((t: Table) => `${t.id}. ${t.name}`.toLowerCase().includes(search.toLowerCase())).map((t: Table) => (<TableComponent key={t.id} table={t} />))
+                        data.toSpliced(50).filter((t: Table) => `${t.id}. ${t.name}`.toLowerCase().includes(search.toLowerCase())).map((t: Table) => (<TableComponent key={t.id} table={t} />))
                     ) : isLoading ? <div className=' flex justify-center col-span-2'><Spinner size='lg' className=' mt-4' color='danger'/></div> : null
                 }
             </div>

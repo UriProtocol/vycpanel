@@ -103,7 +103,7 @@ export default function GuestsPage() {
             <div className='grid sm:grid-cols-2 gap-4 mt-4 mb-6'>
                 {
                     !isLoading && data ? (
-                        data?.filter((g: typeof exampleGuests[0]) => `${g.id}. ${g.fullName}`.toLowerCase().includes(search?.toLowerCase() || '')).map((g: typeof exampleGuests[0]) => {
+                        data?.filter?.((g: typeof exampleGuests[0]) => `${g.id}. ${g.fullName}`.toLowerCase().includes(search?.toLowerCase() || ''))?.toSpliced(50)?.map((g: typeof exampleGuests[0]) => {
                             return (
                                 <GuestCard key={g.id} g={g} mutate={mutate}/>
                             )
