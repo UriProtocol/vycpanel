@@ -101,7 +101,11 @@ export default function ScannerPage() {
       {
         !data.guestName ? (
           <>
-            <Scanner onScan={(result) => setRawScanner(result)} />
+            <p className=' mt-4 text-center opacity-80 text-primary text-sm'>Coloca el código dentro del recuadro rojo y presiona</p>
+            <p className=' mt-1 text-center opacity-80 text-primary text-sm'>"Escanear invitación"</p>
+            <div className=' mx-auto max-w-[min(70%,25rem)] mt-4 p-1.5 bg-primary shadow rounded-sm'>
+              <Scanner onScan={(result) => setRawScanner(result)} />
+            </div>
             {
               !!scannerResult && (
                 <motion.div
