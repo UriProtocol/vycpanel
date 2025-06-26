@@ -49,6 +49,7 @@ export default function DeleteGeneralsButton({ mutate }: { mutate: () => void })
                     description: 'No puedes eliminar más invitaciones generales de las que existen',
                     color: 'danger'
                 })
+                return
             }
             //@ts-expect-error
             if (error?.response?.data?.error?.includes('assigned')) {
@@ -57,6 +58,7 @@ export default function DeleteGeneralsButton({ mutate }: { mutate: () => void })
                     description: 'No se puede eliminar la invitación general ya que está asignada a una mesa.',
                     color: 'danger'
                 })
+                return
             }
 
             addToast({
