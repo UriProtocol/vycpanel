@@ -44,7 +44,7 @@ export default function GuestCard({ g, mutate }: { g: Guest, mutate: () => void}
 
     return (
         <>
-            <div className='px-5 py-4 bg-opacity-60 relative bg-rose-950/20 rounded-sm '>
+            <div className='px-5 py-4 bg-opacity-60 relative bg-rose-950/20 rounded-sm max-w-[89vw] '>
                 <div>
                     <p className='max-w-[70%] overflow-hidden text-ellipsis whitespace-nowrap'>{g.id}. {g.fullName}</p>
                     <p className=' text-xs opacity-50 absolute top-[1.15rem] right-12'>{new Date(g.createdAt).toLocaleDateString()}</p>
