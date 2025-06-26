@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
 const initData = {
+  folio: "",
   guestName: "",
   tableName: "",
   ticketStatus: ""
@@ -39,10 +40,19 @@ export default function ScannerPage() {
       console.log(error)
 
       //@ts-expect-error
+      if (error?.response?.data?.includes('does not match')) {
+        addToast({
+          title: 'Hubo un error',
+          description: 'El código QR no coincide con ningún invitado',
+          color: 'danger'
+        })
+        return
+      }
+      //@ts-expect-error
       if (error?.response?.data?.includes('invalid code')) {
         addToast({
           title: 'Hubo un error',
-          description: 'No se encontró esta invitación.',
+          description: 'El código QR es inválido',
           color: 'danger'
         })
         return
@@ -123,7 +133,16 @@ export default function ScannerPage() {
               opacity: 1
             }}
           >
-            <p>Nombre del invitado: <span className=' opacity-75'>{data.guestName}</span></p>
+            {
+              !!data.guestName && (
+                <p>Nombre del invitado: <span className=' opacity-75'>{data.guestName}</span></p>
+              )
+            }
+            {
+              !!data.folio && (
+                <p>Invitación general #{data.folio}</p>
+              )
+            }
             <p>Nombre de la mesa: <span className=' opacity-75'>{data.tableName || 'Sin mesa'}</span></p>
             <p>Estatus del invitado: <span className=' opacity-75'>{data.ticketStatus == 'active' ? 'Asistirá' : 'No asistirá'}</span></p>
             <Button fullWidth className='mt-4' color='success' variant='bordered' onPress={handleReset}>Escanear otra invitación</Button>
