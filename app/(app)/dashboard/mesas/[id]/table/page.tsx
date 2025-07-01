@@ -18,8 +18,8 @@ import UnassignGuestModal from './UnassignGuestModal'
 import AssignGeneralModal from './AssignGeneralModal'
 
 const fetcher = ([url]: [url: string]) => api.get(url).then(res => res.data as Table).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener los datos de la mesa', color: 'danger' }))
-const guestsFetcher = () => api.get('guests').then(res => res.data as Guest[]).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener a los invitados', color: 'danger' }))
-const generalsFetcher = () => api.get('tickets/generals').then(res => res.data as GeneralTicket[]).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener las invitaciones generales', color: 'danger' }))
+const guestsFetcher = () => api.get('guests').then(res => res.data as {data: Guest[]}).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener a los invitados', color: 'danger' }))
+const generalsFetcher = () => api.get('tickets/generals').then(res => res.data as {data: GeneralTicket[]}).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener las invitaciones generales', color: 'danger' }))
 
 const initValues = {
     nombre: '',
@@ -276,8 +276,8 @@ export default function TablesPage() {
                             {
                                 guestSize.occupied < guestSize.capacity && (
                                     <div className='grid grid-cols-2 gap-3'>
-                                        <AssignGuestModal mutate={mutate} table={table} data={guests || []} isLoading={isLoadingGuests} mutateGuests={mutateGuests} />
-                                        <AssignGeneralModal mutate={mutate} table={table} data={generalTickets || []} isLoading={isLoadingGeneralTickets} mutateGuests={mutateGeneralTickets} />
+                                        <AssignGuestModal mutate={mutate} table={table} data={guests?.data || []} isLoading={isLoadingGuests} mutateGuests={mutateGuests} />
+                                        <AssignGeneralModal mutate={mutate} table={table} data={generalTickets?.data || []} isLoading={isLoadingGeneralTickets} mutateGuests={mutateGeneralTickets} />
                                     </div>
                                 )
                             }
