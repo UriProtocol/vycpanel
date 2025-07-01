@@ -91,7 +91,7 @@ export default function AddGeneralButton({ mutate }: { mutate: () => void }) {
                                     labelPlacement='outside'
                                     value={count}
                                     onValueChange={setCount}
-                                    maxValue={10}
+                                    maxValue={5}
                                 />
                             </ModalBody>
                             <ModalFooter>
