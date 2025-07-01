@@ -6,22 +6,18 @@ import { Input } from '@heroui/input';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@heroui/modal'
 import { Spinner } from '@heroui/spinner';
 import { addToast } from '@heroui/toast';
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FaChair, FaMagnifyingGlass, FaPlus } from 'react-icons/fa6'
-import useSWR from 'swr';
 
 
-export default function AssignGuestModal({ mutate, table, data, mutateGuests, isLoading }: { mutate: () => void, table: Table, data: Guest[], mutateGuests: () => void, isLoading: boolean }) {
+export default function AssignGuestModal(
+    { mutate, table, data, mutateGuests, isLoading, search, debouncedSearch, setSearch, size, setSize }:
+        { mutate: () => void, table: Table, data: any, mutateGuests: () => void, isLoading: boolean, search: string, debouncedSearch: string, setSearch: (search: string) => void, size: number, setSize: any }
+) {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    const [search, setSearch] = useState('')
     const [isLoadingAssign, setIsLoadingAssign] = useState(false)
-
-    const filteredGuests = useMemo(() => {
-        const tableGuestIds = new Set(table.guests.map(guest => guest.id));
-        return data?.filter((guest: Guest) => !tableGuestIds.has(guest.id) && (guest.confirmAttendance && !guest.tableId) && `${guest.fullName}`.toLowerCase().includes(search)) || [];
-    }, [table.guests?.length, data?.length, search]);
 
     async function handleAssign(g: Guest, onClose: () => void) {
         const guestSize = g.additionals + 1
@@ -61,6 +57,44 @@ export default function AssignGuestModal({ mutate, table, data, mutateGuests, is
         }
     }
 
+    //-----------------------Infinite scroll logic--------------------
+    const guests = data ? data.flatMap((page: any) => page.data) : []
+    const isLoadingMore = isLoading || (size > 0 && data && typeof data[size - 1] === "undefined")
+    const isEmpty = data?.[0]?.data?.length === 0
+    const isReachingEnd = isEmpty || (data && data[data.length - 1]?.data?.length < 20)
+
+    // Infinite scroll loader
+    const loadMoreRef = React.useRef<HTMLDivElement>(null)
+
+    const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+        const [target] = entries
+        if (target.isIntersecting && !isLoadingMore && !isReachingEnd) {
+            setSize(size + 1)
+        }
+    }, [isLoadingMore, isReachingEnd, setSize, size])
+
+    useEffect(() => {
+
+        const scrollContainer = document.querySelector('.modal-body');
+        if (!scrollContainer) {
+            return
+        }
+
+        const observer = new IntersectionObserver(handleObserver, {
+            root: scrollContainer,
+            rootMargin: '20px',
+            threshold: 0,
+        })
+
+        if (loadMoreRef.current) observer.observe(loadMoreRef.current)
+
+        return () => {
+            if (loadMoreRef.current) observer.unobserve(loadMoreRef.current)
+        }
+    }, [handleObserver, isLoading, debouncedSearch, isOpen])
+
+    //-----------------------Infinite scroll logic--------------------
+
     return (
         <>
             <Button
@@ -91,13 +125,13 @@ export default function AssignGuestModal({ mutate, table, data, mutateGuests, is
                                     onValueChange={setSearch}
                                 />
                             </ModalHeader>
-                            <ModalBody className='flex flex-col gap-3 max-h-[70vh] min-h-[70vh] overflow-auto'>
+                            <ModalBody className='flex flex-col gap-3 max-h-[70vh] min-h-[70vh] overflow-auto modal-body'>
                                 <p className=' text-xs opacity-75 mb-2'>Presiona el ícono de la silla para asignar a un invitado a la mesa</p>
                                 {
                                     isLoading && <Spinner color='danger' size='lg' className=' mx-auto mt-6' />
                                 }
                                 {
-                                    !isLoading && filteredGuests.map((g: Guest) => {
+                                    !isLoading && guests.map((g: Guest) => {
 
                                         return (
                                             <div key={g.id} className='bg-rose-950/30 rounded-sm p-4 flex items-center justify-between'>
@@ -118,6 +152,13 @@ export default function AssignGuestModal({ mutate, table, data, mutateGuests, is
                                         )
                                     })
                                 }
+                                <div ref={loadMoreRef} className='flex justify-center my-4'>
+                                    {isLoadingMore ? (
+                                        <Spinner size='lg' color='danger' />
+                                    ) : isReachingEnd ? (
+                                        <p className='text-gray-500'>No hay más invitados</p>
+                                    ) : null}
+                                </div>
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="warning" onPress={onClose} variant='bordered'>
