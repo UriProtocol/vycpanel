@@ -16,10 +16,53 @@ import AssignGuestModal from './AssignGuestModal'
 import { GeneralTicket, Guest, Table } from '@/lib/types'
 import UnassignGuestModal from './UnassignGuestModal'
 import AssignGeneralModal from './AssignGeneralModal'
+import useSWRInfinite from 'swr/infinite'
+
+const PAGE_SIZE = 20;
+
+const getGuestsKey = (pageIndex: number, previousPageData: any, search: string) => {
+    // Reached the end
+    if (previousPageData && !previousPageData.data.length) return null
+
+    // First page, we don't have `previousPageData`
+    if (pageIndex === 0) return `guests/unassigned?page=1&page_size=${PAGE_SIZE}&search=${search}`
+
+    // Add the search parameter to subsequent pages
+    return `guests/unassigned?page=${pageIndex + 1}&page_size=${PAGE_SIZE}&search=${search}`
+}
+
+const guestsFetcher = (url: string) => api.get(url).then(res => res.data).catch(() => {
+    addToast({
+        title: 'Hubo un error',
+        description: 'Hubo un error al obtener a los invitados',
+        color: 'danger'
+    })
+    return {data: []}
+})
+
+const getGeneralsKey = (pageIndex: number, previousPageData: any) => {
+    // Reached the end
+    if (previousPageData && !previousPageData.data.length) return null
+
+    // First page, we don't have `previousPageData`
+    if (pageIndex === 0) return `tickets/generals-unassigned?page=1&page_size=${PAGE_SIZE}`
+
+    // Add the search parameter to subsequent pages
+    return `tickets/generals-unassigned?page=${pageIndex + 1}&page_size=${PAGE_SIZE}`
+}
+
+const generalsFetcher = (url: string) => api.get(url).then(res => res.data).catch(() => {
+    addToast({
+        title: 'Hubo un error',
+        description: 'Hubo un error al obtener a los invitados',
+        color: 'danger'
+    })
+    return { data: [] }
+})
 
 const fetcher = ([url]: [url: string]) => api.get(url).then(res => res.data as Table).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener los datos de la mesa', color: 'danger' }))
-const guestsFetcher = () => api.get('guests').then(res => res.data as Guest[]).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener a los invitados', color: 'danger' }))
-const generalsFetcher = () => api.get('tickets/generals').then(res => res.data as GeneralTicket[]).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener las invitaciones generales', color: 'danger' }))
+//const guestsFetcher = () => api.get('guests').then(res => res.data as {data: Guest[]}).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener a los invitados', color: 'danger' }))
+//const generalsFetcher = () => api.get('tickets/generals').then(res => res.data as {data: GeneralTicket[]}).catch(() => addToast({ title: 'Hubo un error', description: 'Hubo un error al obtener las invitaciones generales', color: 'danger' }))
 
 const initValues = {
     nombre: '',
@@ -32,16 +75,46 @@ export default function TablesPage() {
 
     const { data: table, isLoading: isLoadingTable, mutate } = useSWR([`tables/guests/${id || ''}`], fetcher)
 
-    const { data: guests, isLoading: isLoadingGuests, mutate: mutateGuests } = useSWR('guests', guestsFetcher)
-
-    const { data: generalTickets, isLoading: isLoadingGeneralTickets, mutate: mutateGeneralTickets } = useSWR('tickets/generals', generalsFetcher)
-
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const [isLoadingDelete, setIsLoadingDelete] = useState(false)
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
     const [hasChanged, setHasChanged] = useState(false)
     const [values, setValues] = useState(initValues)
+
+    //-------------For guests infinite scroll----------------------
+    const [search, setSearch] = useState('')
+    const [debouncedSearch, setDebouncedSearch] = useState('')
+
+    const { data: guestsData, size: sizeGuests, setSize: setSizeGuests, isLoading: isLoadingGuests, mutate: mutateGuests } = useSWRInfinite(
+        (pageIndex, previousPageData) => getGuestsKey(pageIndex, previousPageData, debouncedSearch),
+        guestsFetcher,
+        {
+            revalidateFirstPage: false,
+        }
+    )
+
+    useEffect(() => {
+
+        setSizeGuests(1)
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search)
+        }, 500)
+
+        return () => clearTimeout(timer)
+    }, [search])
+    //-------------For guests infinite scroll----------------------
+    //-------------For generals infinite scroll--------------------
+      const { data: generalsData, size: sizeGenerals, setSize: setSizeGenerals, isLoading: isLoadingGenerals, mutate: mutateGenerals } = useSWRInfinite(
+        (pageIndex, previousPageData) => getGeneralsKey(pageIndex, previousPageData),
+        generalsFetcher,
+        {
+            revalidateFirstPage: false,
+        }
+    )
+
+    //-------------For generals infinite scroll--------------------
+
 
     const router = useRouter()
 
@@ -276,8 +349,28 @@ export default function TablesPage() {
                             {
                                 guestSize.occupied < guestSize.capacity && (
                                     <div className='grid grid-cols-2 gap-3'>
-                                        <AssignGuestModal mutate={mutate} table={table} data={guests || []} isLoading={isLoadingGuests} mutateGuests={mutateGuests} />
-                                        <AssignGeneralModal mutate={mutate} table={table} data={generalTickets || []} isLoading={isLoadingGeneralTickets} mutateGuests={mutateGeneralTickets} />
+                                        <AssignGuestModal 
+                                            mutate={mutate} 
+                                            table={table} 
+                                            data={guestsData} 
+                                            isLoading={isLoadingGuests} 
+                                            mutateGuests={mutateGuests} 
+                                            size={sizeGuests} 
+                                            setSize={setSizeGuests} 
+                                            search={search}
+                                            debouncedSearch={debouncedSearch}
+                                            setSearch={setSearch}
+                                        />
+                                        <AssignGeneralModal 
+                                            mutate={mutate} 
+                                            table={table} 
+                                            data={generalsData} 
+                                            isLoading={isLoadingGenerals} 
+                                            mutateGenerals={mutateGenerals} 
+                                            size={sizeGenerals} 
+                                            setSize={setSizeGenerals} 
+                                        />
+                                        {/*<AssignGeneralModal mutate={mutate} table={table} data={generalTickets?.data || []} isLoading={isLoadingGeneralTickets} mutateGuests={mutateGeneralTickets} />*/}
                                     </div>
                                 )
                             }
